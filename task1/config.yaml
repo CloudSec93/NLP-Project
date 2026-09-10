@@ -1,0 +1,68 @@
+# OdiaEval hate-speech track (Group 7) — Task 2 experiment configuration.
+# Every value here is recorded into each run's run_config.json so a reported
+# score can always be traced back to the settings that produced it.
+
+model:
+  name: ai4bharat/IndicBERTv2-MLM-only
+  # Leave null to resolve and record whatever revision the Hub serves at run
+  # time. Pin it to the recorded SHA once the first real run has completed.
+  revision: null
+  num_labels: 2
+
+data:
+  # Root of the Task 1 release (the folder holding proportional/ and match_minority/).
+  # This is the server layout. If it is missing, data.py falls back to the paths
+  # in `root_fallbacks` and to $ODIAEVAL_DATA_ROOT before giving up.
+  root: "../odiaeval-hate-dataset-v1"
+  root_fallbacks:
+    - "../odiaeval-hate-dataset-v1 (1)/odiaeval-hate-dataset-v1"
+    - "~/DTSC422/odiaeval-hate-dataset-v1"
+  variants: [proportional, match_minority]
+  text_column: text_ory
+  label_column: label
+  # text_eng is a direct label leak. It is dropped before tokenisation and this
+  # list is asserted against the tokeniser input in data.py.
+  forbidden_columns: [text_eng]
+
+tokenizer:
+  # 256 covers the corpus with minimal truncation; see results/token_stats.json
+  # for the measured distribution behind this choice.
+  max_length: 256
+  padding: max_length
+  truncation: true
+
+training:
+  seed: 42
+  epochs: 3
+  learning_rate: 2.0e-5
+  train_batch_size: 32
+  eval_batch_size: 64
+  gradient_accumulation_steps: 1
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  max_grad_norm: 1.0
+  lr_scheduler_type: linear
+  # Checkpoint selection happens on validation macro-F1 only. The benchmark test
+  # split and the native Odia set are never consulted during training.
+  evaluation_strategy: epoch
+  save_strategy: epoch
+  metric_for_best_model: macro_f1
+  greater_is_better: true
+  load_best_model_at_end: true
+  save_total_limit: 2
+  logging_steps: 100
+  # auto -> bf16 on Ampere or newer, fp16 on older CUDA, off on CPU.
+  mixed_precision: auto
+
+evaluation:
+  # Argmax over the two logits. The assignment forbids tuning a threshold on the
+  # native set, so no threshold is fitted anywhere in this pipeline.
+  decision: argmax
+
+targets:
+  published_macro_f1: 90.94
+  tolerance_points: 2.0
+
+paths:
+  models_dir: models
+  results_dir: results

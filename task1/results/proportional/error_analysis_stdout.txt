@@ -1,0 +1,43 @@
+# Error analysis — benchmark_test
+
+Rows: 3780. Accuracy 89.68. Macro-F1 89.68. HATE precision 88.89, recall 90.24, F1 89.56.
+
+## Question versus statement
+
+| cut | n | share | gold HATE | predicted HATE | accuracy | macro-F1 | FP | FN |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| question | 2050 | 54.2% | 36.6% | 36.3% | 89.76 | 88.95 | 102 | 108 |
+| statement | 1730 | 45.8% | 63.8% | 65.7% | 89.60 | 88.61 | 107 | 73 |
+
+## The advance prediction
+
+The set is **mixed mood** at a 54.2% question rate, so the data card predicts the model will **no directional prediction (the set is not mood-skewed)**.
+
+Gold HATE rate 49.0%, predicted HATE rate 49.8%, a bias of +0.7 points.
+
+**Verdict: NOT TESTABLE.**
+
+Chi-square of mood against error: 0.01, p = 0.9139, phi = 0.002. No significant association between mood and error.
+
+## By source configuration
+
+| source | n | accuracy | macro-F1 |
+|---|---:|---:|---:|
+| Dolly_T | 327 | 97.55 | 77.15 |
+| HHRLHF_T | 381 | 89.24 | 88.37 |
+| Toxic_Matrix | 3072 | 88.90 | 88.74 |
+
+## By length
+
+| characters | n | accuracy | predicted HATE |
+|---|---:|---:|---:|
+| 0-50 | 334 | 93.41 | 17.1% |
+| 50-100 | 703 | 91.89 | 32.6% |
+| 100-200 | 1367 | 89.98 | 59.7% |
+| 200-400 | 1127 | 87.13 | 60.3% |
+| 400-10000 | 249 | 88.35 | 40.2% |
+
+## Confidence
+
+Mean confidence when correct: 0.9598. When wrong: 0.8294. Errors made above 0.9 confidence: 173.
+

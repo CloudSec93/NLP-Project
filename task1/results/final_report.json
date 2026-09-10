@@ -1,0 +1,16 @@
+{
+  "target_macro_f1": 90.94,
+  "tolerance_points": 2.0,
+  "variants": {
+    "proportional": {
+      "benchmark_macro_f1": 0.8968114153369231,
+      "native_macro_f1": null,
+      "translationese_gap": null
+    },
+    "match_minority": {
+      "benchmark_macro_f1": 0.8905710414170527,
+      "native_macro_f1": null,
+      "translationese_gap": null
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "variant": "proportional",
+  "benchmark": {
+    "split": "test",
+    "n": 3780,
+    "trivial_floors": {
+      "always_hate": {
+        "macro_f1": 0.3291
+      },
+      "always_non_hate": {
+        "macro_f1": 0.3375
+      },
+      "random_50_50": {
+        "macro_f1": 0.4917
+      }
+    },
+    "surface_features": {
+      "macro_f1": 0.6315,
+      "accuracy": 0.6317,
+      "hate_f1": 0.6221
+    },
+    "question_mark_rule": {
+      "macro_f1": 0.6345,
+      "accuracy": 0.6354,
+      "hate_f1": 0.6155
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "n": 3780,
+  "accuracy": 0.8968253968253969,
+  "macro_f1": 0.8968114153369231,
+  "macro_precision": 0.8967921935837153,
+  "macro_recall": 0.8969290949601266,
+  "mcc": 0.7937212767374388,
+  "hate_precision": 0.8889479277364506,
+  "hate_recall": 0.9023732470334412,
+  "hate_f1": 0.895610278372591,
+  "per_class": {
+    "NON_HATE": {
+      "precision": 0.90463645943098,
+      "recall": 0.891484942886812,
+      "f1": 0.8980125523012552,
+      "support": 1926
+    },
+    "HATE": {
+      "precision": 0.8889479277364506,
+      "recall": 0.9023732470334412,
+      "f1": 0.895610278372591,
+      "support": 1854
+    }
+  },
+  "confusion_matrix": [
+    [
+      1717,
+      209
+    ],
+    [
+      181,
+      1673
+    ]
+  ],
+  "predicted_hate_rate": 0.4978835978835979,
+  "gold_hate_rate": 0.49047619047619045,
+  "decision_rule": "argmax",
+  "provenance": {
+    "kind": "benchmark",
+    "variant": "proportional",
+    "split": "test",
+    "path": "/home/deepfake/DTSC422/odiaeval-hate-dataset-v1/proportional/test.parquet"
+  },
+  "model_dir": "/home/deepfake/DTSC422/odiaeval-hate-task2/models/proportional",
+  "max_length": 256,
+  "environment": {
+    "timestamp_utc": "2026-09-06T17:08:06Z",
+    "python": "3.11.16",
+    "platform": "Linux-6.17.0-1030-oem-x86_64-with-glibc2.39",
+    "git_commit": null,
+    "torch": "2.14.0+cu130",
+    "cuda_available": true,
+    "gpu": "NVIDIA RTX 6000 Ada Generation",
+    "gpu_count": 1,
+    "cuda": "13.0",
+    "transformers": "4.44.2"
+  },
+  "trained_on_variant": "proportional",
+  "training_seed": 42
+}
