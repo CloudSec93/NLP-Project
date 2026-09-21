@@ -1,0 +1,138 @@
+{
+  "build_timestamp_utc": "2026-09-05T05:54:07Z",
+  "git_commit": "6c1fadde3dab97ed71b8bc307d6d371fb18c24a7",
+  "config_sha256": "099f676717fffc136c87f74c7e032b485cbef6c961299acb5cb9e5aa579169df",
+  "seed": 42,
+  "pinned_artefacts": {
+    "dataset": {
+      "repo_id": "ai4bharat/indic-align",
+      "revision": "032b6a9070e7f85f1a38e0506419f4590a20455a",
+      "kind": "datasets",
+      "verified_on_hub": true
+    },
+    "dataset_parquet_convert": {
+      "repo_id": "ai4bharat/indic-align",
+      "revision": "40d2d14e81a45934c111a80ffe61429606513355",
+      "kind": "datasets",
+      "verified_on_hub": true
+    },
+    "teacher": {
+      "repo_id": "facebook/roberta-hate-speech-dynabench-r4-target",
+      "revision": "391c99ab8b3f65beb77746a2cf6ddf1ddf9817e6",
+      "kind": "models",
+      "verified_on_hub": true
+    }
+  },
+  "dataset_configs": [
+    "Toxic_Matrix",
+    "HHRLHF_T",
+    "Dolly_T"
+  ],
+  "expected_rows": {
+    "Toxic_Matrix": 90352,
+    "HHRLHF_T": 32669,
+    "Dolly_T": 15011
+  },
+  "scoring_pass": {
+    "device": "cpu",
+    "dtype_forward": "float32",
+    "softmax_dtype": "float32",
+    "requested_batch_size": 64,
+    "effective_batch_size": 64,
+    "sort_by_length": true,
+    "prob_decimals": 6,
+    "torch_version": "2.4.1+cpu",
+    "deterministic_algorithms_enforced": true,
+    "rows_per_sec": 37.72
+  },
+  "release_schema": [
+    "example_id",
+    "doc_id",
+    "source_config",
+    "text_ory",
+    "text_eng",
+    "label",
+    "label_str",
+    "teacher_prob_hate",
+    "teacher_prob_hate_raw",
+    "dedup_group",
+    "split",
+    "num_turns",
+    "ory_script_purity"
+  ],
+  "releases": {
+    "proportional": {
+      "path": "data/processed/odia_hate_v1_proportional",
+      "rows": 37272,
+      "files": {
+        "proportional/train.parquet": {
+          "rows": 29917,
+          "bytes": 6519476,
+          "sha256": "d9d4e9866180fc55c403dab82adb1b2d05d5f8a8e21913741ca342cbbed3f762"
+        },
+        "proportional/train.jsonl": {
+          "rows": 29917,
+          "bytes": 31107003,
+          "sha256": "19a5117ad0b0c1450b874621920c4405eb42bcbdbd2b4d4db826b2ee18995f4d"
+        },
+        "proportional/validation.parquet": {
+          "rows": 3575,
+          "bytes": 803800,
+          "sha256": "ff56743041550a4f8f93ddf42e96a498066cb61183eadd41a2dcb0583e12e8fe"
+        },
+        "proportional/validation.jsonl": {
+          "rows": 3575,
+          "bytes": 3749769,
+          "sha256": "a83f90f97973f38b3928fee26f1ca96f62df19635a89eb1387682449e73c86bf"
+        },
+        "proportional/test.parquet": {
+          "rows": 3780,
+          "bytes": 836993,
+          "sha256": "15b8f288307c5eb53f0e6c1c703ac153f390f7578d10df805879042ee185374a"
+        },
+        "proportional/test.jsonl": {
+          "rows": 3780,
+          "bytes": 3892317,
+          "sha256": "cf7a4090bd241e1a177c866277e7fa90fb098329329d0923ef1f1b7f7a2afe56"
+        }
+      }
+    },
+    "match_minority": {
+      "path": "data/processed/odia_hate_v1_match_minority",
+      "rows": 37272,
+      "files": {
+        "match_minority/train.parquet": {
+          "rows": 29933,
+          "bytes": 6826375,
+          "sha256": "5ecdacd3d0709bc4a6803e4bd7b92396b08f0fcd5147db836d85e2f32b84c1dc"
+        },
+        "match_minority/train.jsonl": {
+          "rows": 29933,
+          "bytes": 32755996,
+          "sha256": "1393962b68a4cdceaf34466c3c456f177ff204389765632a74f1b07dc0255c77"
+        },
+        "match_minority/validation.parquet": {
+          "rows": 3574,
+          "bytes": 844622,
+          "sha256": "941b07454655d64efe3c307142f4ed95e561435a256c23cbe69c9b74911428f8"
+        },
+        "match_minority/validation.jsonl": {
+          "rows": 3574,
+          "bytes": 3966982,
+          "sha256": "942751ba88832911c33c8da5df06f22a18897d0cb8dc5a72e751f677aad83b0e"
+        },
+        "match_minority/test.parquet": {
+          "rows": 3765,
+          "bytes": 871786,
+          "sha256": "093d07b8051c1c306340f06fcdd214307b63da86f367661f4c21c5eec44a9640"
+        },
+        "match_minority/test.jsonl": {
+          "rows": 3765,
+          "bytes": 4088609,
+          "sha256": "e22e32f112c63f29169a829e2cad0b6c61a6941f52ad004a348ad7c99c6f3983"
+        }
+      }
+    }
+  },
+  "stage_completed": "7-freeze"
+}
