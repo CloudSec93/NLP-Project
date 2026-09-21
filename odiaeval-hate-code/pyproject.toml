@@ -1,0 +1,13 @@
+[project]
+name = "odiaeval-hate-task1"
+version = "0.1.0"
+description = "OdiaEval hate-speech dataset construction & weak-labelling pipeline (Task 1)"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

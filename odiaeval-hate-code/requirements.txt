@@ -1,0 +1,33 @@
+# OdiaEval hate-speech pipeline — Task 1. Pinned for reproducibility (spec §0).
+# Target runtime: Google Colab, free tier, single T4 GPU, Python 3.10+.
+#
+# NOTE on torch: Colab ships its own CUDA-matched torch build. If the pinned
+# wheel below conflicts with the Colab driver, install torch FIRST from Colab's
+# index and let the rest resolve around it — the pipeline only uses torch for
+# fp16 inference in Stage 3 and does not depend on a specific minor version.
+# This caveat is recorded in the data card.
+
+# --- data acquisition / tabular ---
+huggingface-hub==0.24.6
+datasets==2.21.0
+pyarrow==17.0.0
+pandas==2.2.2
+numpy==1.26.4
+
+# --- teacher inference (Stage 3) ---
+torch==2.4.1
+transformers==4.44.2
+
+# --- deduplication (Stage 5) ---
+datasketch==1.6.5
+
+# --- surface-feature diagnostic (Stage 7A) ---
+scikit-learn==1.5.2
+
+# --- config / misc ---
+PyYAML==6.0.2
+regex==2024.9.11
+tqdm==4.66.5
+
+# --- tests ---
+pytest==8.3.3

@@ -1,0 +1,154 @@
+# =============================================================================
+# OdiaEval hate-speech dataset pipeline — Task 1 configuration
+# -----------------------------------------------------------------------------
+# Every tunable lives here. No magic numbers in code (CLAUDE.md §5.6).
+# The two teacher thresholds are FIXED by the assignment — they are surfaced
+# here for visibility but any change away from 0.90 / 0.05 must be loud and
+# must be justified in the data card.
+# =============================================================================
+
+seed: 42                       # random / numpy / torch / hashing salt (CLAUDE.md §5.1)
+
+# --- pinned artefacts (resolved SHAs recorded in artifacts/manifest.json) ------
+dataset:
+  repo_id: "ai4bharat/indic-align"
+  revision: "032b6a9070e7f85f1a38e0506419f4590a20455a"   # main @ 2024-07-25
+  parquet_revision: "40d2d14e81a45934c111a80ffe61429606513355"  # refs/convert/parquet
+  configs: ["Toxic_Matrix", "HHRLHF_T", "Dolly_T"]
+  # columns pruned on read — RAM is the binding constraint (CLAUDE.md §6)
+  keep_columns: ["doc_id", "num_turns", "eng_Latn", "ory_Orya"]
+  # expected row counts — assert with a WARNING on drift, do not crash (spec §5 Stage 1)
+  expected_rows:
+    Toxic_Matrix: 90352
+    HHRLHF_T: 32669
+    Dolly_T: 15011
+  # total before any filtering: 138032 rows (verified against HF datasets-server 2026-09-04)
+  expected_configs:            # full config list — assert this set is present
+    - Anudesh
+    - Dolly_T
+    - HHRLHF_T
+    - Indic_ShareLlama
+    - IndoWordNet
+    - OpenAssistant_T
+    - Toxic_Matrix
+    - WikiHow
+    - Wiki_Chat
+    - Wiki_Conv
+
+teacher:
+  repo_id: "facebook/roberta-hate-speech-dynabench-r4-target"
+  revision: "391c99ab8b3f65beb77746a2cf6ddf1ddf9817e6"   # main @ 2023-03-16
+  expected_id2label: {0: "nothate", 1: "hate"}            # assert at load (spec §3)
+  max_length: 512                # max_position_embeddings 514 -> tokenizer 512
+  batch_size: 64                 # [choice] halve automatically on CUDA OOM
+  min_batch_size: 4
+  fp16: true                     # T4 inference
+  sort_by_length: true           # cut padding waste
+  checkpoint_every_batches: 200   # resume-safe (Colab disconnects)
+  prob_decimals: 6               # [choice] round p(hate) to N decimals BEFORE
+                                 # thresholding so GPU fp non-determinism cannot
+                                 # flip boundary rows between runs (see data card)
+
+# --- Stage 1: acquisition ----------------------------------------------------
+acquire:
+  # "stream"   -> HTTP range-read the hosted parquet and keep ONLY the pruned
+  #               columns. Transfers ~7% of the bytes and never stores the
+  #               1.71 GB source locally. Default.
+  # "download" -> fetch the full parquet to data/raw/hf/ first, then prune.
+  #               Fallback for flaky networks / offline reruns.
+  mode: "stream"
+  parquet_path_template: "{config}/train/0000.parquet"
+  http_timeout_s: 120
+  max_retries: 5
+  retry_backoff_s: 3.0
+  # pinned so the cached parquet is byte-identical across runs
+  output_compression: "zstd"
+  output_compression_level: 3
+  output_row_group_size: 2000
+
+# --- Stage 2: extraction / quality gates (spec §4⑤) ---------------------------
+extract:
+  turn_index: 0                  # turn-0 user prompt only; index [1] never enters
+  min_chars: 3                   # [choice] length bounds
+  max_chars: 2000                # [choice]
+  min_ory_script_purity: 0.60    # [choice] fraction of alphabetic codepoints in
+                                 # the Odia block U+0B00–U+0B7F; tolerates numerals,
+                                 # punctuation and code-mixed English tokens while
+                                 # catching wholly untranslated (Latin) rows
+  # script-purity definition (pinned, test-covered):
+  #   denominator = count of codepoints with Unicode category L* (any letter)
+  #   numerator   = those letters whose codepoint is in U+0B00..U+0B7F
+  #   non-letters (digits, punctuation, whitespace, symbols) excluded from both
+  #   empty / no-letter strings -> purity 0.0
+  #
+  # Gate order matters: the FIRST gate a row fails is its recorded primary reason,
+  # so stage_stats can account for every row exactly once. Purity on an empty
+  # string is meaningless, hence shape -> non-empty -> length -> purity.
+  gate_order: ["turn_shape_invalid", "empty_after_strip", "length_out_of_bounds",
+               "low_ory_script_purity"]
+  # If any single gate drops more than this share of a config, stop and report
+  # rather than writing output - the gate or its premise is probably wrong.
+  max_gate_drop_pct: 2.0
+  reject_samples_per_reason: 10
+
+# --- Stage 4: thresholds (FIXED by assignment — see header) ------------------
+thresholds:
+  hate_min: 0.90                 # p(hate) >= 0.90  -> HATE (1)
+  non_hate_max: 0.05             # p(hate) <= 0.05  -> NON_HATE (0)
+  # anything strictly between is DISCARDED
+
+# --- Stage 5: deduplication (spec §4④) --------------------------------------
+dedup:
+  normalise: ["nfc", "collapse_ws", "strip_zero_width"]  # exact-dedup normal form
+  dedup_language: "ory_Orya"     # dedup runs on the text the model sees
+  also_report_english_side: true
+  minhash:
+    num_perm: 128
+    char_ngram: 5                # character 5-grams
+    jaccard_threshold: 0.85      # [choice]
+  # [decide+justify] cluster tie-break when a near-dup cluster spans more than one
+  # (label, source_config) cell — see data card. Default: assign whole cluster by
+  # MAJORITY cell (ties broken by the representative row = lowest example_id).
+  cluster_cell_assignment: "majority"
+
+# --- Stage 6: balance + split (spec §4⑥, §6) -------------------------------
+balance:
+  method: "downsample_majority"  # [choice] never upsample the minority
+  stratify_by: "source_config"   # keep any Stage-4 mitigation intact
+  # How the majority class is stratified across source_config when downsampling.
+  # Measured on the post-dedup corpus (see data card):
+  #   proportional   - keep NON_HATE's own source mix (70.5/12.4/17.1).
+  #                    NMI(source;label) 0.0496 -> 0.0925. Balancing AMPLIFIES the
+  #                    confound, because giving the minority class equal weight
+  #                    amplifies its distinctive source profile.
+  #   match_minority - give NON_HATE the same source mix as HATE (91.7/7.9/0.4).
+  #                    NMI -> 0.0000 exactly: source carries no label information.
+  #                    Costs nothing in corpus size (37,272 either way) but makes
+  #                    the corpus register-monotone and discards ~14.4k benign
+  #                    Dolly_T rows.
+  # Default is proportional: it is the non-restructuring option, and PROMPT.md
+  # forbids restructuring the corpus without an explicit decision.
+  stratify_mode: "proportional"  # proportional | match_minority
+split:
+  proportions: {train: 0.80, validation: 0.10, test: 0.10}   # [choice] 80/10/10
+  stratify_by: ["label", "source_config"]
+  unit: "dedup_group"            # hash the cluster id, not the row — clusters
+                                 # cannot straddle a split boundary
+  hash_salt_field: "seed"        # salt = str(seed)
+  # priority order when cluster-integrity, exact balance and exact split ratios
+  # cannot all be satisfied at once (documented in data card):
+  #   1. cluster integrity (no dedup_group in two splits)   — hard
+  #   2. class balance (50/50 HATE/NON_HATE)                 — hard
+  #   3. per-cell split ratios                               — best effort
+
+# --- native Odia gold test set (NOT built here; schema only, for later load) --
+native_odia_testset:
+  built_by: "professor"
+  note: "never touched by any thresholding or selection step in this repo"
+
+paths:
+  raw: "data/raw"
+  interim: "data/interim"
+  processed: "data/processed"
+  release_name: "odia_hate_v1"
+  artifacts: "artifacts"
