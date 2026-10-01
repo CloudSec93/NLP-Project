@@ -16,6 +16,12 @@ here as a frozen input.
    Task 1 data card asks for.
 6. Writes `results/final_report.md` in the assignment's result template.
 
+**Native Odia results are in.** See [`results/native_report.md`](results/native_report.md)
+for both balancing variants, under both the primary and sensitivity label mappings, with
+bootstrap confidence intervals and a prevalence-vs-behaviour decomposition of the
+translationese gap — the native set is ~1–4% HATE against ~50% in the benchmark test, so the
+raw macro-F1 gap alone conflates a metric effect with real behaviour change.
+
 ## Setup
 
 ```bash

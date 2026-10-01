@@ -1,0 +1,79 @@
+{
+  "variant": "proportional",
+  "tag": "native_sensitivity",
+  "n": 1034,
+  "n_hate": 43,
+  "prevalence_pct": 4.16,
+  "accuracy": 0.8733,
+  "macro_f1": 0.5686,
+  "macro_f1_ci95": [
+    0.5258,
+    0.6147
+  ],
+  "hate_precision": 0.1393,
+  "hate_recall": 0.3953,
+  "hate_f1": 0.2061,
+  "confusion_matrix": [
+    [
+      886,
+      105
+    ],
+    [
+      26,
+      17
+    ]
+  ],
+  "majority_baseline_non_hate": {
+    "accuracy": 0.9584,
+    "macro_f1": 0.4894
+  },
+  "benchmark_reference": {
+    "tag": "benchmark_test",
+    "macro_f1": 0.8968114153369231,
+    "tpr": 0.9024,
+    "fpr": 0.1085
+  },
+  "gap_decomposition": {
+    "raw_macro_f1_gap": 0.3282,
+    "mt_rates_at_native_prevalence_macro_f1": 0.6752,
+    "gap_from_prevalence": 0.2216,
+    "gap_from_behaviour": 0.1066,
+    "balanced_accuracy_benchmark": 0.8969,
+    "balanced_accuracy_native": 0.6447,
+    "balanced_accuracy_gap": 0.2522
+  },
+  "native_fpr": 0.106,
+  "native_tpr": 0.3953,
+  "question_rate": 0.0155,
+  "script_mix": {
+    "romanized": 891,
+    "odia_script": 125,
+    "mixed": 18
+  },
+  "by_script": {
+    "mixed": {
+      "n": 18,
+      "n_hate": 1,
+      "accuracy": 0.8889,
+      "macro_f1": 0.4706,
+      "predicted_hate_rate": 0.0556,
+      "gold_hate_rate": 0.0556
+    },
+    "odia_script": {
+      "n": 125,
+      "n_hate": 8,
+      "accuracy": 0.88,
+      "macro_f1": 0.6886,
+      "predicted_hate_rate": 0.152,
+      "gold_hate_rate": 0.064
+    },
+    "romanized": {
+      "n": 891,
+      "n_hate": 34,
+      "accuracy": 0.8721,
+      "macro_f1": 0.5463,
+      "predicted_hate_rate": 0.1145,
+      "gold_hate_rate": 0.0382
+    }
+  }
+}

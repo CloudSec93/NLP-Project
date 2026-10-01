@@ -1,0 +1,66 @@
+{
+  "n": 1034,
+  "accuracy": 0.8800773694390716,
+  "macro_f1": 0.4982782369146006,
+  "macro_precision": 0.5131039689387403,
+  "macro_recall": 0.6423828125,
+  "mcc": 0.08638935009387404,
+  "hate_precision": 0.03278688524590164,
+  "hate_recall": 0.4,
+  "hate_f1": 0.06060606060606061,
+  "per_class": {
+    "NON_HATE": {
+      "precision": 0.993421052631579,
+      "recall": 0.884765625,
+      "f1": 0.9359504132231405,
+      "support": 1024
+    },
+    "HATE": {
+      "precision": 0.03278688524590164,
+      "recall": 0.4,
+      "f1": 0.06060606060606061,
+      "support": 10
+    }
+  },
+  "confusion_matrix": [
+    [
+      906,
+      118
+    ],
+    [
+      6,
+      4
+    ]
+  ],
+  "predicted_hate_rate": 0.11798839458413926,
+  "gold_hate_rate": 0.009671179883945842,
+  "decision_rule": "argmax",
+  "provenance": {
+    "kind": "native",
+    "path": "/home/deepfake/DTSC422/odiaeval-hate-task2/data/native/05_hate_speech_groups_6_7.jsonl",
+    "text_column": "text",
+    "label_column": "label",
+    "label_map_override": {
+      "hateful": 1,
+      "offensive": 0,
+      "neither": 0
+    },
+    "note": "evaluation only; never used for training, threshold or model selection"
+  },
+  "model_dir": "/home/deepfake/DTSC422/odiaeval-hate-task2/models/proportional",
+  "max_length": 256,
+  "environment": {
+    "timestamp_utc": "2026-10-01T14:35:28Z",
+    "python": "3.11.16",
+    "platform": "Linux-6.17.0-1032-oem-x86_64-with-glibc2.39",
+    "git_commit": null,
+    "torch": "2.14.0+cu130",
+    "cuda_available": true,
+    "gpu": "NVIDIA RTX 6000 Ada Generation",
+    "gpu_count": 3,
+    "cuda": "13.0",
+    "transformers": "4.44.2"
+  },
+  "trained_on_variant": "proportional",
+  "training_seed": 42
+}
